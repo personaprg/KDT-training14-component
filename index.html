@@ -33,13 +33,15 @@
                 const menuItem = createElement('li', {}, createElement('a', { href: item.hash }, item.text));
                 menuItems.push(menuItem);
             }
+
+
+            //------------------------------------- 여기까지 분석함(0.0.1)------------------------------------------------/
             // 메뉴(비순서형 목록)와 콘텐츠 div 생성
             const menu = createElement('ul', {}, ...menuItems);
             const content = createElement('div', {}, '안녕하세요 React'); // 수정: 'Hello React'를 '안녕하세요 React'로 변경
             // 메뉴와 콘텐츠를 포함한 컨테이너 div 생성
             return createElement('div', {}, menu, content);
         }
-
         // 가상 DOM을 실제 DOM으로 렌더링하는 함수
         function render(virtualDom) {
             if (typeof virtualDom === 'string') {
