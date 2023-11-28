@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- 문자 인코딩을 UTF-8로 설정 -->
+    <meta charset="UTF-8">
+    <!-- Internet Explorer 호환성 설정 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 반응형 디자인을 위한 뷰포트 설정 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 문서의 제목 설정 -->
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- id가 'root'인 컨테이너 div 생성 -->
+    <div id="root"></div>
+
+    <!-- 가상 DOM을 생성하고 렌더링하는 인라인 JavaScript -->
+    <script>
+        // 가상 DOM 요소를 생성하는 함수
+        function createElement(type, props, ...children) {
+            return { type, props, children };
+        }
+
+        // 상태 데이터를 기반으로 컴포넌트를 생성하는 함수
+        function component(stateData) {
+            const menuItems = [];
+            // 상태 데이터를 반복하여 링크가 포함된 리스트 아이템 생성
+            for (let i = 0; i < stateData.length; i++) {
+                const item = stateData[i];
+                // 링크가 포함된 리스트 아이템 생성
+                const menuItem = createElement('li', {}, createElement('a', { href: item.hash }, item.text));
+                menuItems.push(menuItem);
+            }
+            // 메뉴(비순서형 목록)와 콘텐츠 div 생성
+            const menu = createElement('ul', {}, ...menuItems);
+            const content = createElement('div', {}, '안녕하세요 React'); // 수정: 'Hello React'를 '안녕하세요 React'로 변경
+            // 메뉴와 콘텐츠를 포함한 컨테이너 div 생성
+            return createElement('div', {}, menu, content);
+        }
+
+        // 가상 DOM을 실제 DOM으로 렌더링하는 함수
+        function render(virtualDom) {
+            if (typeof virtualDom === 'string') {
+                // 가상 DOM이 문자열인 경우 텍스트 노드 생성
+                return document.createTextNode(virtualDom);
+            }
+
+            // 가상 DOM 유형을 기반으로 HTML 요소 생성
+            const element = document.createElement(virtualDom.type);
+            // 가상 DOM 속성을 기반으로 요소에 속성 설정
+            if (virtualDom.props) {
+                for (const [key, value] of Object.entries(virtualDom.props)) {
+                    element.setAttribute(key, value);
+                }
+            }
+
+            // 자식을 재귀적으로 렌더링하고 요소에 추가
+            for (let i = 0; i < virtualDom.children.length; i++) {
+                const child = virtualDom.children[i];
+                element.appendChild(render(child));
+            }
+            // 렌더링된 요소 반환
+            return element;
+        }
+
+        // 컴포넌트의 예시 상태 데이터
+        const stateData = [
+            { hash: '#home', text: '홈' }, // 수정: '#hoem'을 '#home'으로 변경
+            { hash: '#about', text: '소개' },
+            { hash: '#services', text: '서비스' },
+            { hash: '#portfolio', text: '포트폴리오' }, // 수정: 'ProtFolio'를 'Portfolio'로 변경
+            { hash: '#contact', text: '문의' },
+        ];
+
+        // 컴포넌트와 상태 데이터를 기반으로 가상 DOM 생성
+        const virtualDom = component(stateData);
+        // id가 'root'인 컨테이너 요소 가져오기
+        const container = document.getElementById('root');
+        // 가상 DOM을 렌더링하고 컨테이너에 추가
+        container.appendChild(render(virtualDom));
+    </script>
+</body>
+
+</html>
